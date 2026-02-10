@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Minha Princesa ❤️</title>
+    <style>
+        /* CSS INTEGRADO */
+        :root {
+            --bg: #0a0a0a;
+            --envelope-color: #ff4d6d;
+            --lid-color: #c9184a;
+            --letter-bg: #ffffff;
+            --accent: #ff0050;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .container {
+            position: relative;
+        }
+
+        /* Estilo do Envelope */
+        .envelope-wrapper {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            background: var(--envelope-color);
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            cursor: pointer;
+        }
+
+        .lid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-top: 110px solid var(--lid-color);
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            transform-origin: top;
+            transition: transform 0.6s ease;
+            z-index: 3;
+        }
+
+        .envelope-front {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-top: 100px solid transparent;
+            border-left: 150px solid #ff758f;
+            border-right: 150px solid #ff758f;
+            border-bottom: 100px solid #ff758f;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            z-index: 2;
+        }
+
+        /* Estilo da Cartinha interna */
+        .letter {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            width: 270px;
+            height: 180px;
+            background: var(--letter-bg);
+            border-radius: 5px;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: transform 0.6s ease, height 0.6s ease;
+            z-index: 1;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .letter .poesia {
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-style: italic;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+        }
+
+        .letter .mensagem {
+            font-size: 1rem;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        /* Botão Interativo */
+        .btn-abrir {
+            position: absolute;
+            bottom: -70px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 25px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(255, 0, 80, 0.4);
+            white-space: nowrap;
+        }
+
+        /* Classes de Animação (JS adiciona isso) */
+        .container.open .lid {
+            transform: rotateX(180deg);
+        }
+
+        .container.open .letter {
+            transform: translateY(-130px);
+            height: 280px;
+            z-index: 4;
+        }
+
+        .container.open .btn-abrir {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="heartCanvas"></canvas>
+
+    <div class="container" id="mainContainer">
+        <div class="envelope-wrapper">
+            <div class="lid"></div>
+            <div class="envelope-front"></div>
+            <div class="letter">
+                <p class="poesia">"Cada vez que eu olho nos seus olho<br>Me espelho, cê sabe, né?"</p>
+                <div class="mensagem">
+                    Para minha <span class="highlight">Pequenina</span>,<br>
+                    minha <span class="highlight">Princesa</span>.<br><br>
+                    Queria apenas dizer o quanto eu amo você e o quanto você é importante na minha vida. ❤️
+                </div>
+            </div>
+        </div>
+        <button class="btn-abrir" onclick="abrirCarta()">Clique aqui ❤️</button>
+    </div>
+
+    <script>
+        /* JAVASCRIPT INTEGRADO */
+
+        // 1. Função para abrir a carta
+        function abrirCarta() {
+            document.getElementById('mainContainer').classList.add('open');
+        }
+
+        // 2. Sistema de Corações no Fundo (Canvas)
+        const canvas = document.getElementById('heartCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let hearts = [];
+
+        class Heart {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + 20;
+                this.size = Math.random() * 15 + 10;
+                this.speed = Math.random() * 2 + 1;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.y -= this.speed;
+                if (this.y < -20) this.reset();
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 0, 80, ${this.opacity})`;
+                ctx.font = `${this.size}px Arial`;
+                ctx.fillText('❤️', this.x, this.y);
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < 40; i++) {
+                hearts.push(new Heart());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hearts.forEach(h => {
+                h.update();
+                h.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        init();
+        animate();
+    </script>
+</body>
+</html>
